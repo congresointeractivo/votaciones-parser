@@ -44,36 +44,36 @@ def deactivate_readflag(line):
 def activate_readflag(line):
     return line.find("Apellido y Nombre") != -1
 
-
-textfile = open(textfilename, 'r')
-line = textfile.readline()
-readflag = False
-while line:
-    
-    # ignore blank lines
-    if not line.strip():
-        line = textfile.readline()
-        continue
-    
-    if deactivate_readflag(line):
-        readflag = False
-    
-    if readflag:
-        data = [e.strip() for e in line.strip().split("  ") if e]
-        if len(data) == 4: 
-            # Apellido y Nombre, Bloque, Provincia, Voto
-            outfile.write( ','.join(data) + '\n' )
-            
-    if activate_readflag(line):
-        readflag = True
-        
+if __name__ == '__main__':
+    textfile = open(textfilename, 'r')
     line = textfile.readline()
+    readflag = False
+    while line:
     
-textfile.close()
-
-if not keep_textfile:
-    os.remove(textfilename)
-
-infile.close()
-outfile.close()
+        # ignore blank lines
+        if not line.strip():
+            line = textfile.readline()
+            continue
+        
+        if deactivate_readflag(line):
+            readflag = False
+        
+        if readflag:
+            data = [e.strip() for e in line.strip().split("  ") if e]
+            if len(data) == 4: 
+                # Apellido y Nombre, Bloque, Provincia, Voto
+                outfile.write( ','.join(data) + '\n' )
+        
+        if activate_readflag(line):
+            readflag = True
+        
+        line = textfile.readline()
+    
+    textfile.close()
+    
+    if not keep_textfile:
+        os.remove(textfilename)
+    
+    infile.close()
+    outfile.close()
 

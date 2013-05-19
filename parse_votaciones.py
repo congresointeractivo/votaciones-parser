@@ -1,6 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-import sys, os, subprocess, argparse
+import sys, os, subprocess, argparse, urllib
 
 
 # ArgumentParser configuration
@@ -32,6 +32,8 @@ infilename = args.infile.name
 subprocess.call('pdftotext -nopgbrk -layout %s' % infilename, shell=True)
 textfilename = infilename[:-3] + 'txt'
 
+# Fix filenames
+textfilename = urllib.unquote(textfilename.encode("utf-8"))
 
 # parse the text file generated with pdftotext 
 # (currently outputs csv format)

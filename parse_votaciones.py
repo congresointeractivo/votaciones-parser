@@ -17,36 +17,48 @@ parser.add_argument('--keep-textfile', action='store_true',\
         help='mantiene el archivo generado por pdftotext')
 
 
-# parse actual arguments
+def call_pdftotext(filename):
+    ''' Uses pdftotext to create a text file based on the 
+    given filename of a pdf file.
 
-args = parser.parse_args()
-infile = args.infile
-outfile = args.outfile
-outformat = args.outformat
-keep_textfile = args.keep_textfile
-infilename = args.infile.name
+    Returns the name of the text file.
+    '''
+    subprocess.call('pdftotext -nopgbrk -layout %s' % filename, shell=True)
+    return infilename[:-3] + 'txt'
 
-
-# pdftotext call
-
-subprocess.call('pdftotext -nopgbrk -layout %s' % infilename, shell=True)
-textfilename = infilename[:-3] + 'txt'
-
-# Fix filenames
-textfilename = urllib.unquote(textfilename.encode("utf-8"))
-
-# parse the text file generated with pdftotext 
-# (currently outputs csv format)
 
 def deactivate_readflag(line):
-    return line.strip()[0]=="[" \
-        or line.find("Página") != -1 \
-        or line.find("Observaciones") != -1
+    ''' Returns True if the readflag must be deactivated. Returns False if not.'''
+    return line.strip()[0]=='[' \
+        or line.find('Página') != -1 \
+        or line.find('Observaciones') != -1
+
 
 def activate_readflag(line):
-    return line.find("Apellido y Nombre") != -1
+    ''' Returns True if the readflag must be activated. Returns False if not.'''
+    return line.find('Apellido y Nombre') != -1
+
 
 if __name__ == '__main__':
+    
+    # parse actual arguments
+    
+    args = parser.parse_args()
+    infile = args.infile
+    outfile = args.outfile
+    outformat = args.outformat
+    keep_textfile = args.keep_textfile
+    infilename = infile.name
+
+    # pdftotext call
+
+    textfilename = call_pdftotext(infilename)
+
+    # Fix filenames
+    textfilename = urllib.unquote(textfilename.encode("utf-8"))
+
+    # process input file and write to output file
+    
     textfile = open(textfilename, 'r')
     line = textfile.readline()
     readflag = False
@@ -61,7 +73,7 @@ if __name__ == '__main__':
             readflag = False
         
         if readflag:
-            data = [e.strip() for e in line.strip().split("  ") if e]
+            data = [e.strip() for e in line.strip().split('  ') if e]
             if len(data) == 4: 
                 # Apellido y Nombre, Bloque, Provincia, Voto
                 outfile.write( ','.join(data) + '\n' )

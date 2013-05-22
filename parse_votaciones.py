@@ -38,6 +38,10 @@ def activate_readflag(line):
     ''' Returns True if the readflag must be activated. Returns False if not.'''
     return line.find('Apellido y Nombre') != -1
 
+def split_data(line):
+    ''' Returns list of in ... '''
+    return [e.strip() for e in line.strip().split('  ') if e]
+
 
 if __name__ == '__main__':
     
@@ -58,8 +62,43 @@ if __name__ == '__main__':
     
     textfile = open(textfilename, 'r')
     line = textfile.readline()
+
+    # process header
+
+    while line.find("Período")==-1:
+        line = textfile.readline().strip()
+    periodo, sesion, reunion = line.split(' - ')
+    
+    line = textfile.readline().strip()
+    titulo = line
+    
+    line = textfile.readline().strip()
+    acta, version, fecha, hora = split_data(line)    
+    acta = acta.split(' ')[-1]
+    fecha = fecha.split(' ')[-1]
+    hora = hora.split(' ')[-1]
+
+    while line.find("Base Mayoría")==-1:
+        line = textfile.readline()
+    base, tipo, quorum = split_data(line)
+    base = base.split(':')[-1].strip()
+    tipo = tipo.split(':')[-1].strip()
+    quorum = quorum.split(':')[-1].strip()
+
+    while line.find("Miembros del cuerpo") == -1:
+        line = textfile.readline()
+    miembros, basura, resultado = split_data(line)
+    miembros = miembros.split(':')[-1]
+
+    while line.find("Presidente") == -1:
+        line = textfile.readline()
+    presidente = line.split(':')[-1].strip()
+
+    # process individual votes 
+
+    line = textfile.readline()
     readflag = False
-    while line:
+    while line and line.find("Observaciones")==-1:
     
         # ignore blank lines
         if not line.strip():
@@ -70,7 +109,7 @@ if __name__ == '__main__':
             readflag = False
         
         if readflag:
-            data = [e.strip() for e in line.strip().split('  ') if e]
+            data = split_data(line)          
             if len(data) == 4: 
                 # Apellido y Nombre, Bloque, Provincia, Voto
                 outfile.write( ','.join(data) + '\n' )
@@ -80,8 +119,23 @@ if __name__ == '__main__':
         
         line = textfile.readline()
     
-    textfile.close()
+    # Observaciones...
     
+    if line:
+        observaciones = []
+        line = textfile.readline()
+        while line and line.find("Modificación")==-1:
+            if not line.strip():
+                line = textfile.readline()
+                continue
+            observaciones.append(line)
+            line = textfile.readline()
+        texto_observaciones = ''.join(observaciones)
+    
+
+    # close files
+    
+    textfile.close()
     if not keep_textfile:
         os.remove(textfilename)
     

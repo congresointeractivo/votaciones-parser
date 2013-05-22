@@ -1,7 +1,6 @@
-Este repositorio contiene las actas de votaciones nominales del congreso de la nación. Detalle:
-* Actas en PDF de texto desde el año 2001 hasta mayo del 2013.
-* Actas en PDF de imágen (necesitan OCR) de los años 1999 y 2000.
-* CSV extraídos de las actias usando votaciones-parser (algunos archivos fallaron 17/may/13)
+Este repositorio contiene utilidades para descargar y parsear las actas de votaciones 
+nominales del Congreso de la Nación.
+
 
 parse_all_votaciones.sh
 =======================
@@ -93,9 +92,4 @@ Para ver las opciones de uso:
 ## License
 
 Junto con este proyecto, deberías recibir un archivo denominado ``LICENSE`` con los términos de la licencia.
-
-
-
-
-
 

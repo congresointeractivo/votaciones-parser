@@ -14,5 +14,5 @@ OUTDIR="$2"
 for file in `ls "$INDIR"`
 do
 	echo "Procesando $INDIR/$file..."
-	python parse_votaciones.py "$INDIR/$file" "$OUTDIR/$file.csv"
+	python parse_votaciones.py "$INDIR/$file" "$OUTDIR/$file.json"
 done

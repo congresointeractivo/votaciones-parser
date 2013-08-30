@@ -1,5 +1,8 @@
 #!/usr/bin/python
 # encoding: utf8
+# Author: Juan Carizza
+# E-mail juan.carizza@gmail.com
+
 
 import urllib2
 import urllib
